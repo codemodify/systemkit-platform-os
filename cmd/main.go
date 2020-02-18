@@ -9,13 +9,15 @@ import (
 )
 
 func main() {
-	data, err := json.Marshal(platformOS.Info())
+	osInfo := platformOS.Info()
+
+	data, err := json.Marshal(osInfo)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
 	if len(os.Args) > 1 && os.Args[1] == "-p" {
-		data, err = json.MarshalIndent(platformOS.Info(), "", "    ")
+		data, err = json.MarshalIndent(osInfo, "", "    ")
 		if err != nil {
 			fmt.Println(err.Error())
 		}

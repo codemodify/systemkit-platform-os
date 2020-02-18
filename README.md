@@ -1,32 +1,55 @@
 # Detailed OS Detection at Runtime
 
-# Usage in code
-- Intented use is as a library in Go code
+# Usage
+- as a library in Go code
 	```go
 	package main
 
-	import platform "github.com/codemodify/systemkit-platform"
+	import (
+		"encoding/json"
+		"fmt"
+		"os"
+
+		platformOS "github.com/codemodify/systemkit-platform-os"
+	)
 
 	func main() {
+		data, err := json.Marshal(platformOS.Info())
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 
-		// Example 1
-		fmt.Println(platform.GetInfo().CPU.Architecture)     // => ex: arm OR amd64
-		fmt.Println(platform.GetInfo().CPU.Variant.Name)     // => ex: armv5 OR armv6 OR armv8, etc
-		fmt.Println(platform.GetInfo().CPU.Variant.Detailed) // => ex: armv5te
-
-		// Example 2
-		if platform.IsArm(platform.GetInfo().CPU.Architecture) {
-			if if platform.GetInfo().CPU.Variant.Name == platform.CPUV_ARMv8 {
-				// we got AMRv8
-			} else if platform.GetInfo().CPU.Variant.Name == platform.CPUV_ARMv5 {
-				if platform.GetInfo().CPU.Variant.Detailed == platform.CPUVD_ARMv5T {
-					// we got ARMv5t
-				} else if platform.GetInfo().CPU.Variant.Detailed == platform.CPUVD_ARMv5TE {
-					// we got ARMv5te
-				} else if platform.GetInfo().CPU.Variant.Detailed == platform.CPUVD_ARMv5TEJ {
-					// we got ARMv5tej
-				}
+		if len(os.Args) > 1 && os.Args[1] == "-p" {
+			data, err = json.MarshalIndent(platformOS.Info(), "", "    ")
+			if err != nil {
+				fmt.Println(err.Error())
 			}
+		}
+
+		if
+
+		fmt.Println(string(data))
+
+		if osInfo.Name == platformOS.OS_Linux {
+
+			fmt.Println("WE ARE ON Linux")
+			fmt.Println("Distro: ", osInfo.Distribution)
+
+		} else if platformOS.IsBSD(osInfo.Name) {
+
+			fmt.Println("WE ARE ON BSD family")
+
+		} else if platformOS.IsDarwin(osInfo.Name) {
+
+			fmt.Println("WE ARE ON WINDOWS family")
+
+		} else if platformOS.IsWindows(osInfo.Name) {
+
+			fmt.Println("WE ARE ON WINDOWS family")
 		}
 	}
 	```
+
+- as a binary on a a bunch of platforms
+	- `https://github.com/codemodify/systemkit-platform-os/releases/latest`
+	![](https://raw.githubusercontent.com/codemodify/systemkit-platform-os/master/.helper-files/dox/sample.png)
