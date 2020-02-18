@@ -1,0 +1,12 @@
+# Ref: https://www.gitignore.io https://github.com/github/gitignore
+
+# ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~
+.DS_Store
+.idea
+.eclipse
+.vscode
+
+# ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~ ~~~~
+**/*.log
+**/temp*
+**/.vagrant
