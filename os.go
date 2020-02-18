@@ -1,11 +1,5 @@
 package os
 
-import (
-	"fmt"
-	"runtime"
-	"strings"
-)
-
 // OSName -
 type OSName string
 
@@ -85,21 +79,4 @@ var supportedOses = []OSName{
 	OS_CYGWIN,
 	OS_MSYS,
 	OS_MINGW,
-}
-
-func getOSFromString(osNameToCheck string) OSName {
-	osNameToCheck = strings.ToLower(osNameToCheck)
-
-	for _, osName := range supportedOses {
-		osNameAsLowerCase := strings.ToLower(fmt.Sprintf("%v", osName))
-		if strings.Index(osNameAsLowerCase, osNameToCheck) != -1 {
-			return osName
-		}
-	}
-
-	return OS_Uknown
-}
-
-func getOS() OSName {
-	return getOSFromString(runtime.GOOS)
 }

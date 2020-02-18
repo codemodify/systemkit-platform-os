@@ -2,9 +2,28 @@ package os
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
+	"runtime"
 	"strings"
 )
+
+func getOSFromString(osNameToCheck string) OSName {
+	osNameToCheck = strings.ToLower(osNameToCheck)
+
+	for _, osName := range supportedOses {
+		osNameAsLowerCase := strings.ToLower(fmt.Sprintf("%v", osName))
+		if strings.Index(osNameAsLowerCase, osNameToCheck) != -1 {
+			return osName
+		}
+	}
+
+	return OS_Uknown
+}
+
+func getOS() OSName {
+	return getOSFromString(runtime.GOOS)
+}
 
 func runBinaryFetchOutput(binary string, args []string) ([]string, error) {
 	var out bytes.Buffer
