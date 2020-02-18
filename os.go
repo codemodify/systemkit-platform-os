@@ -11,10 +11,10 @@ type OSName string
 
 // OS -
 type OS struct {
-	Name         OSName   `json:"name"`        // ex: Linux
-	Version      string   `json:"version"`     // ex: `10.0.14393.1066` on Windows
-	Distribution string   `json:"dstribution"` // ex: Arch
-	Features     []string `json:"features"`    // ex: `win32k` on Windows
+	Name         OSName   `json:"name,omitempty"`        // ex: Linux
+	Version      string   `json:"version,omitempty"`     // ex: `10.0.14393.1066` on Windows
+	Distribution string   `json:"dstribution,omitempty"` // ex: Arch
+	Features     []string `json:"features,omitempty"`    // ex: `win32k` on Windows
 }
 
 const (

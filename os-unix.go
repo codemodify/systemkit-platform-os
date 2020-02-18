@@ -1,4 +1,4 @@
-// +build linux
+// +build !windows
 
 package os
 
@@ -8,21 +8,39 @@ import (
 
 // Info -
 func Info() OS {
-	if osInfo, err := tryMethod_uname(); err == nil {
-		return osInfo
+	// collect all
+	osInfos := []OS{
+		tryMethod_uname(),
+		tryMethod_hostnamectl(),
+		tryMethod_hostnamectl(),
 	}
 
-	if osInfo, err := tryMethod_hostnamectl(); err == nil {
-		return osInfo
+	// merge
+	result := OS{}
+
+	for _, osInfo := range osInfos {
+		if osInfo.Name != OS_Uknown && len(osInfo.Name) > 0 && len(result.Name) == 0 {
+			result.Name = osInfo.Name
+		}
+
+		if len(osInfo.Version) > 0 && len(result.Version) == 0 {
+			result.Version = osInfo.Version
+		}
+
+		if len(osInfo.Distribution) > 0 && len(result.Distribution) == 0 {
+			result.Distribution = osInfo.Distribution
+		}
+
+		if len(osInfo.Features) > 0 {
+			result.Features = append(result.Features, osInfo.Features...)
+		}
 	}
 
-	if osInfo, err := tryMethod_hostnamectl(); err == nil {
-		return osInfo
+	if len(result.Name) == 0 {
+		result.Name = OS_Uknown
 	}
 
-	return OS{
-		Name: OS_Uknown,
-	}
+	return result
 }
 
 func intArrayToString(x [65]int8) string {
@@ -39,7 +57,7 @@ func intArrayToString(x [65]int8) string {
 	return str
 }
 
-func tryMethod_uname() (OS, error) {
+func tryMethod_uname() OS {
 	// var uname syscall.Utsname
 	// if err := syscall.Uname(&uname); err != nil {
 	// 	return OS{}, err
@@ -54,12 +72,12 @@ func tryMethod_uname() (OS, error) {
 
 	output1, err1 := runBinaryFetchOutput("uname", []string{"-s"})
 	if err1 != nil {
-		return OS{}, err1
+		return OS{}
 	}
 
 	output2, err2 := runBinaryFetchOutput("uname", []string{"-r"})
 	if err2 != nil {
-		return OS{}, err2
+		return OS{}
 	}
 
 	return OS{
@@ -67,17 +85,17 @@ func tryMethod_uname() (OS, error) {
 		Version:      fetchFirstInList(strings.Join(output2, ""), ""),
 		Distribution: "",
 		Features:     []string{},
-	}, nil
+	}
 }
 
-func tryMethod_hostnamectl() (OS, error) {
+func tryMethod_hostnamectl() OS {
 	//
 	// hostnamectl - part of SystemD, will for sure fail on distros not using it
 	//
 
 	output, err := runBinaryFetchOutput("hostnamectl", []string{"status"})
 	if err != nil {
-		return OS{}, err
+		return OS{}
 	}
 
 	return OS{
@@ -85,17 +103,17 @@ func tryMethod_hostnamectl() (OS, error) {
 		Version:      fetchSecondInList(fetchFromLineToRight(output, "Kernel", ":"), " "),                 // ex: 5.5.4-arch1-1
 		Distribution: fetchFromLineToRight(output, "Operating System", ":"),                               // ex: Arch Linux
 		Features:     []string{},
-	}, nil
+	}
 }
 
-func tryMethod_etc_os_release() (OS, error) {
+func tryMethod_etc_os_release() OS {
 	//
 	// should work on most modern linuxes
 	//
 
 	output, err := runBinaryFetchOutput("cat", []string{"/etc/*-release"})
 	if err != nil {
-		return OS{}, err
+		return OS{}
 	}
 
 	return OS{
@@ -103,7 +121,7 @@ func tryMethod_etc_os_release() (OS, error) {
 		Version:      "",
 		Distribution: cleanUp(fetchFromLineToRight(output, "PRETTY_NAME", "="), []string{"\"", "GNU", "/"}),
 		Features:     []string{},
-	}, nil
+	}
 
 	// #
 	// # RPI

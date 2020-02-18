@@ -10,3 +10,4 @@
 **/*.log
 **/temp*
 **/.vagrant
+cmd/cmd

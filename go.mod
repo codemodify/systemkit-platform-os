@@ -1,4 +1,4 @@
-module github.com/codemodify/systemkit-platform
+module github.com/codemodify/systemkit-platform-os
 
 go 1.13
 

@@ -26,6 +26,10 @@ func runBinaryFetchOutput(binary string, args []string) ([]string, error) {
 func fetchFromLineToRight(lines []string, pattern string, split string) string {
 	for _, line := range lines {
 		list := strings.Split(line, split)
+		if len(strings.TrimSpace(split)) == 0 {
+			list = []string{line}
+		}
+
 		if len(list) > 1 && strings.Contains(strings.TrimSpace(list[0]), pattern) {
 			return strings.TrimSpace(list[1])
 		}
@@ -37,6 +41,10 @@ func fetchFromLineToRight(lines []string, pattern string, split string) string {
 // func fetchFromLineToLeft(lines []string, pattern string, split string) string {
 // 	for _, line := range lines {
 // 		list := strings.Split(line, split)
+// 		if len(strings.TrimSpace(split)) == 0 {
+// 			list = []string{line}
+// 		}
+//
 // 		if len(list) > 1 && strings.Contains(strings.TrimSpace(list[1]), pattern) {
 // 			return strings.TrimSpace(list[0])
 // 		}
@@ -47,6 +55,14 @@ func fetchFromLineToRight(lines []string, pattern string, split string) string {
 
 func fetchFirstInList(line string, split string) string {
 	list := strings.Split(line, split)
+	if len(strings.TrimSpace(split)) == 0 {
+		list = []string{line}
+	}
+
+	if len(strings.TrimSpace(split)) == 0 {
+		list = []string{line}
+	}
+
 	if len(list) > 0 {
 		return strings.TrimSpace(list[0])
 	}
@@ -56,6 +72,10 @@ func fetchFirstInList(line string, split string) string {
 
 func fetchSecondInList(line string, split string) string {
 	list := strings.Split(line, split)
+	if len(strings.TrimSpace(split)) == 0 {
+		list = []string{line}
+	}
+
 	if len(list) > 1 {
 		return strings.TrimSpace(list[1])
 	}
