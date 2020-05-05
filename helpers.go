@@ -1,87 +1,32 @@
 package os
 
 import (
-	"bytes"
-	"fmt"
 	"os/exec"
-	"runtime"
 	"strings"
 )
 
-func getOSFromString(osNameToCheck string) OSName {
-	osNameToCheck = strings.ToLower(osNameToCheck)
-
-	for _, osName := range supportedOses {
-		osNameAsLowerCase := strings.ToLower(fmt.Sprintf("%v", osName))
-		if strings.Index(osNameAsLowerCase, osNameToCheck) != -1 {
-			return osName
-		}
+func newOS() OS {
+	return OS{
+		Family:  Family_Unknown,
+		Name:    OS_Unknown,
+		Version: "",
+		Kernel: KernelInfo{
+			Name:       Kernel_Unknown,
+			Version:    "",
+			BuildTime:  "",
+			ExecFormat: ExecFormat_Unknown,
+		},
+		Features: []string{},
 	}
-
-	return OS_Uknown
 }
 
-func getOS() OSName {
-	return getOSFromString(runtime.GOOS)
-}
-
-func runBinaryFetchOutput(binary string, args []string) ([]string, error) {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-
+func runBinaryFetchOutput(binary string, args []string) []string {
 	cmd := exec.Command(binary, args...)
-	cmd.Stdin = strings.NewReader("")
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return strings.Split(strings.TrimSpace(out.String()), "\n"), nil
+	output, _ := cmd.CombinedOutput()
+	return strings.Split(strings.TrimSpace(string(output)), "\n")
 }
 
-func fetchFromLineToRight(lines []string, pattern string, split string) string {
-	for _, line := range lines {
-		list := strings.Split(line, split)
-		if len(strings.TrimSpace(split)) == 0 {
-			list = []string{line}
-		}
-
-		if len(list) > 1 && strings.Contains(strings.TrimSpace(list[0]), pattern) {
-			return strings.TrimSpace(list[1])
-		}
-	}
-
-	return ""
-}
-
-// func fetchFromLineToLeft(lines []string, pattern string, split string) string {
-// 	for _, line := range lines {
-// 		list := strings.Split(line, split)
-// 		if len(strings.TrimSpace(split)) == 0 {
-// 			list = []string{line}
-// 		}
-//
-// 		if len(list) > 1 && strings.Contains(strings.TrimSpace(list[1]), pattern) {
-// 			return strings.TrimSpace(list[0])
-// 		}
-// 	}
-//
-// 	return ""
-// }
-
-func fetchFirstInList(line string, split string) string {
-	list := strings.Split(line, split)
-	if len(strings.TrimSpace(split)) == 0 {
-		list = []string{line}
-	}
-
-	if len(strings.TrimSpace(split)) == 0 {
-		list = []string{line}
-	}
-
+func fetchFirstInList(list []string) string {
 	if len(list) > 0 {
 		return strings.TrimSpace(list[0])
 	}
@@ -89,23 +34,37 @@ func fetchFirstInList(line string, split string) string {
 	return ""
 }
 
-func fetchSecondInList(line string, split string) string {
-	list := strings.Split(line, split)
-	if len(strings.TrimSpace(split)) == 0 {
-		list = []string{line}
-	}
-
-	if len(list) > 1 {
-		return strings.TrimSpace(list[1])
+func fetchWordAt(manyWords string, split string, position int) string {
+	list := strings.Split(manyWords, split)
+	if len(list) > position {
+		return removeInternalDoubleOrMoreSpaces(strings.TrimSpace(list[position]))
 	}
 
 	return ""
 }
 
-func cleanUp(value string, cleanItems []string) string {
-	for _, item := range cleanItems {
-		value = strings.ReplaceAll(value, item, "")
+func stringInList(val string, values *[]string) bool {
+	for i := 0; i < len(*values); i++ {
+		if (*values)[i] == val {
+			return true
+		}
 	}
 
-	return value
+	return false
+}
+
+func removeWords(value string, wordsToRemove []string) string {
+	for _, word := range wordsToRemove {
+		value = strings.ReplaceAll(value, word, "")
+	}
+
+	return removeInternalDoubleOrMoreSpaces(strings.TrimSpace(value))
+}
+
+func removeInternalDoubleOrMoreSpaces(val string) string {
+	val = strings.ReplaceAll(val, "    ", "")
+	val = strings.ReplaceAll(val, "   ", "")
+	val = strings.ReplaceAll(val, "  ", "")
+
+	return val
 }

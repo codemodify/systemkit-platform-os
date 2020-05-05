@@ -6,21 +6,21 @@ import (
 )
 
 // IsDarwin -
-func IsDarwin(name OSName) bool {
+func IsDarwin(name Name) bool {
 	return (name == OS_Darwin || name == OS_MacOSX)
 }
 
 // IsBSD -
-func IsBSD(name OSName) bool {
+func IsBSD(name Name) bool {
 	if strings.Contains(strings.ToLower(fmt.Sprint("", name)), "bsd") {
 		return true
 	}
 
-	return (name == OS_Dragonfly || name == OS_Bitrig)
+	return (name == OS_DragonflyBSD || name == OS_Bitrig)
 }
 
 // IsWindows -
-func IsWindows(name OSName) bool {
+func IsWindows(name Name) bool {
 	return (name == OS_Windows ||
 		name == OS_CYGWIN ||
 		name == OS_MSYS ||
