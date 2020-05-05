@@ -69,4 +69,4 @@
 
 - as a binary on a a bunch of platforms
 	- `https://github.com/codemodify/systemkit-platform-os/releases/latest`
-	![](https://raw.githubusercontent.com/codemodify/systemkit-platform-os/master/.helper-files/dox/sample.png)
+	![](https://raw.githubusercontent.com/codemodify/systemkit-platform-os/master/.helper-files/dox/samples.png)
